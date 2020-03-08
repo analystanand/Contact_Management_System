@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'contact_management'
+    'contact_app',
+    'localflavor'
 ]
 
 MIDDLEWARE = [
