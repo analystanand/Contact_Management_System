@@ -1,0 +1,15 @@
+{% load render_table from django_tables2 %}
+<!doctype html>
+<html>
+
+<p> First Name: {{contact.Fname}}</p>
+<p> Middle Name:{{contact.Mname}}</p>
+<p> Last Name:{{contact.Lname}}</p>
+
+
+
+{% render_table address %}
+{% render_table date %}
+{% render_table phone %}
+
+</html>

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'contact_app',
     'localflavor',
+    'django_tables2',
 ]
 
 MIDDLEWARE = [
