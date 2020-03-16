@@ -1,15 +1,92 @@
-{% load render_table from django_tables2 %}
-<!doctype html>
-<html>
+{% extends 'base.html' %}
+{% block content %}
+<div class="col-md-6">
+<table class="table table-bordered table-md">
+  <thead>
+    <tr>
+      <th scope="col">Contact_Id</th>
+      <th scope="col">First_Name</th>
+      <th scope="col">Middle_Name</th>
+      <th scope="col">Last_Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for c in contact%}
+    <tr>
+      <td>{{c.Contact_id}}</td>
+      <td>{{c.Fname}}</td>
+      <td>{{c.Mname}}</td>
+      <td>{{c.Lname}}</td>
+    </tr>
+    {%endfor%}
+  </tbody>
+</table>
+</div>
 
-<p> First Name: {{contact.Fname}}</p>
-<p> Middle Name:{{contact.Mname}}</p>
-<p> Last Name:{{contact.Lname}}</p>
 
 
+<div class="col-md-6">
+<table class="table table-bordered table-md">
+  <thead>
+    <tr>
+      <th scope="col">Type</th>
+      <th scope="col">Street</th>
+      <th scope="col">City</th>
+      <th scope="col">State</th>
+      <th scope="col">Zip</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for p in address%}
+    <tr>
+      <td>{{p.Address_type}}</td>
+      <td>{{p.Street}}</td>
+      <td>{{p.City}}</td>
+      <td>{{p.State}}</td>
+      <td>{{p.Zip}}</td>
+    </tr>
+    {%endfor%}
+  </tbody>
+</table>
+</div>
 
-{% render_table address %}
-{% render_table date %}
-{% render_table phone %}
+<div class="col-md-6">
+<table class="table table-bordered table-md">
+  <thead>
+    <tr>
+      <th scope="col">Type</th>
+      <th scope="col">Area</th>
+      <th scope="col">Number</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for p in phone%}
+    <tr>
+      <td>{{p.Phone_type}}</td>
+      <td>{{p.Area_code}}</td>
+      <td>{{p.Number}}</td>
+    </tr>
+    {%endfor%}
+  </tbody>
+</table>
+</div>
 
-</html>
+<div class="col-md-6">
+<table class="table table-bordered table-md">
+  <thead>
+    <tr>
+      <th scope="col">Type</th>
+      <th scope="col">Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {%for d in date%}
+    <tr>
+      <td>{{d.Date_type}}</td>
+      <td>{{d.Date|date:'Y-m-d'}}</td>
+    </tr>
+    {%endfor%}
+  </tbody>
+</table>
+</div>
+{% endblock %}

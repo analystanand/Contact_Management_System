@@ -1,5 +1,7 @@
-<p>HOME</p>
+{% extends 'base.html' %}
 
+{% block content %}
 {% for c in contacts%}
-   <li> {{c.Fname}} </li>
+   <li> <a href="{% url 'contact_detail' pk=c.pk %}">{{c.Fname}}</a> </li>
 {%endfor%}
+{% endblock %}
