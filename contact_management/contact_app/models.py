@@ -15,7 +15,7 @@ class Contact(models.Model):
 
 class Address(models.Model):
     Address_id = models.AutoField(primary_key=True)
-    Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE)
+    Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE,db_column="Contact_id")
     Address_type = models.CharField(max_length=50)
     Street = models.CharField(max_length=200)
     City = models.CharField(max_length=100)
@@ -25,7 +25,7 @@ class Address(models.Model):
 
 class Phone(models.Model):
     Phone_id = models.AutoField(primary_key=True)
-    Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE)
+    Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE,db_column="Contact_id")
     Phone_type = models.CharField(max_length=50)
     Area_code = models.IntegerField(validators=[MaxValueValidator(999)])
     Number = models.IntegerField()
@@ -33,6 +33,6 @@ class Phone(models.Model):
 
 class Date(models.Model):
     Date_id = models.AutoField(primary_key=True)
-    Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE)
+    Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE,db_column="Contact_id")
     Date_type = models.CharField(max_length=50)
     Date = models.DateTimeField()

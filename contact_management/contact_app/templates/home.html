@@ -1,9 +1,47 @@
 {% extends 'base.html' %}
-
 {% block content %}
-{% for c in contacts%}
-   <li> <a href="{% url 'contact_detail' pk=c.pk %}">{{c.Fname}}</a> </li>
-   
-{%endfor%}
-<a href= "{% url 'add_new' %}">Add_New</a>
+
+<div class="row">
+    <div class="col-sm-8">
+
+        <p>
+        <div class="float-left"><h3>List of Contact</h3></div>
+
+        <a class="btn btn-success float-right" href="{%  url 'add_new' %}">Add employee</a>
+        </p>
+
+        <div class="table-responsive-sm">
+            {% if contacts %}
+
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                <tr>
+                    <th>Name</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for c in contacts%}
+
+                <tr>
+                    <th scope="row">
+                        {{c.Fname}} {{c.Lname}}
+                    </td>
+                    <td class="text-center">
+                        <a class="btn btn-primary" href="{%  url 'contact_detail' pk=c.pk %}">Details</a>
+                        <a class="btn btn-warning" href="{%  url 'edit_contact' pk=c.pk %}">Edit</a>
+
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>There is no contacts available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}
