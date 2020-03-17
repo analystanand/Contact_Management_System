@@ -8,14 +8,13 @@ class ContactAdmin(admin.ModelAdmin):
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
     list_display = ['Contact_id']
-    pass
+
 
 @admin.register(Phone)
 class PhoneAdmin(admin.ModelAdmin):
     list_display = ['Contact_id']
-    pass
+
 
 @admin.register(Date)
 class DateAdmin(admin.ModelAdmin):
     list_display = ['Contact_id']
-    pass

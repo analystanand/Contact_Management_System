@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form action="{% url 'add_new' %}" method="post">
+ {%csrf_token%}
+    <table>
+    {{contact}}
+    {{address}}
+    {{phone}}
+    {{date}}
+    </table>
+    <input type="submit" value="Save Contact">
+</form>
+{% endblock %}

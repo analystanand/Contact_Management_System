@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.http import HttpResponse
 from .models import Contact, Address, Phone, Date
+from .forms import ContactForm, AddressForm, PhoneForm, DateForm
 from django.http import Http404
 
 
@@ -19,3 +21,20 @@ def contact_detail(request, pk):
     except Contact.DoesNotExist:
         raise Http404('Contact not found')
     return render(request, 'contact.html', result)
+
+
+def add_new(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            contact = form.save()
+            return redirect('contact_detail', pk=contact.pk)
+    else:
+        contact_form_obj = ContactForm()
+        address_form_obj = AddressForm()
+        phone_form_obj = PhoneForm()
+        date_form_obj = DateForm()
+        return render(request, 'add_new.html', {"contact": contact_form_obj,
+                                                "address": address_form_obj,
+                                                "phone": phone_form_obj,
+                                                "date": date_form_obj})
