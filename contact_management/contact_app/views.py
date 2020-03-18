@@ -68,9 +68,11 @@ def edit_contact(request, pk):
     address = Address.objects.get(Contact_id=pk)
     phone = Phone.objects.get(Contact_id=pk)
     date = Date.objects.get(Contact_id=pk)
+
+
     if request.method == 'POST':
+        print("++++++++++++++++")
         filled_contact_form = ContactForm(request.POST, instance=contact)
-        print(filled_contact_form)
         filled_address_form = AddressForm(request.POST, instance=address)
         filled_phone_form = PhoneForm(request.POST, instance=phone)
         filled_date_form = DateForm(request.POST, instance=date)
@@ -90,24 +92,23 @@ def edit_contact(request, pk):
             temp_phone.Contact_id = updated_contact
             temp_date.Contact_id = updated_contact
             return redirect('contact_detail', pk=updated_contact.pk)
-    else:
-        # pre fill data from previous information
-        pre_filled_contact_form = ContactForm(instance=contact)
-        pre_filled_address_form = AddressForm(instance=address)
-        pre_filled_phone_form = PhoneForm(instance=phone)
-        pre_filled_date_form = DateForm(instance=date)
 
+    #pre fill data from previous information
+    pre_filled_contact_form = ContactForm(instance=contact)
+    pre_filled_address_form = AddressForm(instance=address)
+    pre_filled_phone_form = PhoneForm(instance=phone)
+    pre_filled_date_form = DateForm(instance=date)
     return render(request, 'edit.html', {"contact": pre_filled_contact_form,
-                                                 "address": pre_filled_address_form,
-                                                 "phone": pre_filled_phone_form,
-                                                 "date": pre_filled_date_form})
+                                         "address": pre_filled_address_form,
+                                         "phone": pre_filled_phone_form,
+                                         "date": pre_filled_date_form})
 
 
 def delete_contact(request, pk):
     contact = get_object_or_404(Contact, Contact_id=pk)
 
-    if request.method=='POST':
+    if request.method == 'POST':
         contact.delete()
         return redirect('home')
     else:
-      return render(request,'delete.html',{'contact':contact})
+        return render(request, 'delete.html', {'contact': contact})
