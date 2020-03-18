@@ -4,9 +4,11 @@ from .models import Contact, Address, Phone, Date
 from .forms import ContactForm, AddressForm, PhoneForm, DateForm
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.contrib import messages
+from django.core.paginator import Paginator
 
 
 def home(request):
+    #TODO enable paging
     contacts = Contact.objects.all()
     return render(request, 'home.html', {'contacts': contacts})
 
@@ -69,9 +71,7 @@ def edit_contact(request, pk):
     phone = Phone.objects.get(Contact_id=pk)
     date = Date.objects.get(Contact_id=pk)
 
-
     if request.method == 'POST':
-        print("++++++++++++++++")
         filled_contact_form = ContactForm(request.POST, instance=contact)
         filled_address_form = AddressForm(request.POST, instance=address)
         filled_phone_form = PhoneForm(request.POST, instance=phone)
@@ -112,3 +112,16 @@ def delete_contact(request, pk):
         return redirect('home')
     else:
         return render(request, 'delete.html', {'contact': contact})
+
+
+def search(request):
+    contacts = Contact.objects.all()
+    search_term = ''
+    if 'search' in request.GET:
+        search_term = request.GET["search"]
+        contacts = contacts.filter(Lname__icontains=search_term)
+
+    context ={'contacts':contacts,'search_term':search_term}
+    return render(request, 'search.html', context)
+
+
