@@ -89,13 +89,9 @@ def edit_contact(request, pk):
 
         if valid_contact and valid_address and valid_phone and valid_date:
             updated_contact = filled_contact_form.save()
-            temp_address = filled_address_form.save(commit=False)
-            temp_phone = filled_phone_form.save(commit=False)
-            temp_date = filled_date_form.save(commit=False)
-
-            temp_address.Contact_id = updated_contact
-            temp_phone.Contact_id = updated_contact
-            temp_date.Contact_id = updated_contact
+            filled_address_form.save()
+            filled_phone_form.save()
+            filled_date_form.save()
             return redirect('contact_detail', pk=updated_contact.pk)
 
     # pre fill data from previous information

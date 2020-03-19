@@ -3,12 +3,31 @@
 
 <form action="{% url 'add_new' %}" method="post">
  {%csrf_token%}
+    <input type="submit" value="Update Contact">
     <table>
     {{contact}}
+    </table>
+
+   <div class="row">
+       <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+   <table>
+     <h2>Address</h2>
     {{address}}
+      </table>
+          </div>
+
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+       <table >
+    <h2>Phone</h2>
     {{phone}}
+          </table>
+         </div>
+   <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+          <table>
+    <h2>Date</h2>
     {{date}}
     </table>
-    <input type="submit" value="Save Contact">
+   </div>
+   </div>
 </form>
 {% endblock %}
