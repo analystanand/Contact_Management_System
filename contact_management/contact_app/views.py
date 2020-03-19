@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from django.db.models import Q
+import re
+from django.contrib.postgres.search import SearchVector
 from django.shortcuts import redirect, get_object_or_404
 from .models import Contact, Address, Phone, Date
 from .forms import ContactForm, AddressForm, PhoneForm, DateForm
@@ -8,7 +11,7 @@ from django.core.paginator import Paginator
 
 
 def home(request):
-    #TODO enable paging
+    # TODO enable paging
     contacts = Contact.objects.all()
     return render(request, 'home.html', {'contacts': contacts})
 
@@ -93,7 +96,7 @@ def edit_contact(request, pk):
             temp_date.Contact_id = updated_contact
             return redirect('contact_detail', pk=updated_contact.pk)
 
-    #pre fill data from previous information
+    # pre fill data from previous information
     pre_filled_contact_form = ContactForm(instance=contact)
     pre_filled_address_form = AddressForm(instance=address)
     pre_filled_phone_form = PhoneForm(instance=phone)
@@ -114,14 +117,32 @@ def delete_contact(request, pk):
         return render(request, 'delete.html', {'contact': contact})
 
 
+def normalize_search(search_term,
+                     getterms=re.compile(r'"([^"]+)"|(\S+)').findall,
+                     normspace=re.compile(r'\s{2,}').sub):
+    return [normspace(' ', (t[0] or t[1]).strip()) for t in getterms(search_term)]
+
+
 def search(request):
-    contacts = Contact.objects.all()
     search_term = ''
+    fields = ['Fname', 'Mname', 'Lname', 'address__Address_type', 'address__Street', 'address__City'
+        , 'address__State', 'address__Zip', 'phone__Phone_type', 'phone__Area_code',
+              'phone__Number']
+    contacts = Contact.objects.all()
+    query = None
     if 'search' in request.GET:
         search_term = request.GET["search"]
-        contacts = contacts.filter(Lname__icontains=search_term)
+        terms = normalize_search(search_term)
+        for t in terms:
+            or_query = None
+            for f in fields:
+                q = Q(**{"%s__icontains" % f: t})
+                or_query = q if or_query is None else or_query | q
+            if query is None:
+                query = or_query
+            else:
+                query = query | or_query
 
-    context ={'contacts':contacts,'search_term':search_term}
+        contacts = contacts.filter(query)
+    context = {'contacts': contacts, 'search_term': search_term}
     return render(request, 'search.html', context)
-
-

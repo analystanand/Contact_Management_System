@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-sm-8">
 
-        <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}">
+        <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}" method="GET">
             <input class="form-control mr-sm-2"
                    type="search"
                    placeholder="Search"
@@ -29,7 +29,7 @@
 
                 <tr>
                     <th scope="row">
-                        {{c.Fname}} {{c.Lname}}
+                        {{c.Fname}} {{c.Mname}} {{c.Lname}}
                     </td>
                     <td class="text-center">
                         <a class="btn btn-primary" href="{%  url 'contact_detail' pk=c.pk %}">Details</a>
