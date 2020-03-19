@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<div class="row">
+<div class="row h-100">
     <div class="col-sm-8">
 
         <form class="form-inline my-2 my-lg-0" action="{% url 'search' %}">
@@ -18,7 +17,7 @@
         </p>
 
         <div class="table-responsive-sm">
-            {% if contacts %}
+            {% if page_obj %}
 
             <table class="table table-bordered">
                 <thead class="thead-light">
@@ -28,7 +27,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for c in contacts%}
+                {% for c in page_obj%}
 
                 <tr>
                     <th scope="row">
@@ -44,6 +43,26 @@
                 {% endfor %}
                 </tbody>
             </table>
+
+            <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
             {% else %}
             <p>There is no contacts available.</p>
             {% endif %}

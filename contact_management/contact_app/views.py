@@ -11,9 +11,11 @@ from django.core.paginator import Paginator
 
 
 def home(request):
-    # TODO enable paging
-    contacts = Contact.objects.all()
-    return render(request, 'home.html', {'contacts': contacts})
+    contact_list = Contact.objects.all()
+    paginator = Paginator(contact_list, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'home.html', {'page_obj': page_obj})
 
 
 def contact_detail(request, pk):
