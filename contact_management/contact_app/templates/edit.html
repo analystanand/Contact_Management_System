@@ -1,14 +1,48 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<form method="post">
- {%csrf_token%}
+
+<form  method="post">
+    {%csrf_token%}
+    <div class="text-right md-4">
+        <input class="btn btn-success" type="submit" value="Update Contact">
+    </div>
+
     <table>
-    {{contact}}
-    {{address}}
-    {{phone}}
-    {{date}}
+        {{contact}}
+          <br>
     </table>
-    <input type="submit" value="Update Contact">
+
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+           {{address.management_form}}
+           <table>
+                <h2>Address</h2>
+
+                {%for a in address%}
+                {{a}}
+                {%endfor%}
+            </table>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+              {{phone.management_form}}
+           <table>
+                <h2>Phone</h2>
+                {%for p in phone%}
+                {{p}}
+                {%endfor%}
+            </table>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-4">
+            {{date.management_form}}
+           <table>
+                <h2>Date</h2>
+                {%for d in date%}
+                {{d}}
+                {%endfor%}
+            </table>
+        </div>
+    </div>
 </form>
 {% endblock %}

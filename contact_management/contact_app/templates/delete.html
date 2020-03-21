@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h2>{{contact.Lname}} &nbsp; {{contact.Lname}}</h2>
+<h2>{{contact.Fname}} &nbsp;{{contact.Lname}}</h2>
 <form method='POST'>
     {%csrf_token%}
     <p>Are you sure to delele this contact?</p>

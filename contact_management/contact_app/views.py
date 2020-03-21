@@ -95,9 +95,9 @@ def add_new(request):
 
 def edit_contact(request, pk):
     contact = Contact.objects.get(pk=pk)
-    address = Address.objects.get(Contact_id=pk)
-    phone = Phone.objects.get(Contact_id=pk)
-    date = Date.objects.get(Contact_id=pk)
+    address = Address.objects.filter(Contact_id=pk)
+    phone = Phone.objects.filter(Contact_id=pk)
+    date = Date.objects.filter(Contact_id=pk)
 
     if request.method == 'POST':
         filled_contact_form = ContactForm(request.POST, instance=contact)
@@ -117,15 +117,27 @@ def edit_contact(request, pk):
             filled_date_form.save()
             return redirect('contact_detail', pk=updated_contact.pk)
 
+    address_value = list(address.values('Address_type','Street','City','State','Zip'))
+    phone_value = list(phone.values('Phone_type','Area_code','Number'))
+    date_value = list(date.values('Date_type','Date'))
+
+
+    #create multiple forms
+    address_formset= formset_factory(AddressForm,extra=0)
+    phone_formset = formset_factory(PhoneForm,extra=0)
+    date_formset = formset_factory(DateForm, extra=0)
+
+
     # pre fill data from previous information
     pre_filled_contact_form = ContactForm(instance=contact)
-    pre_filled_address_form = AddressForm(instance=address)
-    pre_filled_phone_form = PhoneForm(instance=phone)
-    pre_filled_date_form = DateForm(instance=date)
+    pre_filled_address_formset = address_formset(initial=address_value)
+    pre_filled_phone_formset = phone_formset(initial=phone_value)
+    pre_filled_date_formset = date_formset(initial=date_value)
+
     return render(request, 'edit.html', {"contact": pre_filled_contact_form,
-                                         "address": pre_filled_address_form,
-                                         "phone": pre_filled_phone_form,
-                                         "date": pre_filled_date_form})
+                                         "address": pre_filled_address_formset,
+                                         "phone": pre_filled_phone_formset,
+                                         "date": pre_filled_date_formset})
 
 
 def delete_contact(request, pk):
@@ -146,9 +158,9 @@ def normalize_search(search_term,
 
 def search(request):
     search_term = ''
-    fields = ['Fname', 'Mname', 'Lname', 'address__Address_type', 'address__Street', 'address__City'
-        , 'address__State', 'address__Zip', 'phone__Phone_type', 'phone__Area_code',
-              'phone__Number']
+    fields = ['Fname', 'Mname', 'Lname',
+              'address__Address_type', 'address__Street', 'address__City''address__State', 'address__Zip',
+              'phone__Phone_type', 'phone__Area_code','phone__Number']
     contacts = Contact.objects.all()
     query = None
     if 'search' in request.GET:
