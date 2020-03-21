@@ -30,3 +30,8 @@ class DateForm(forms.ModelForm):
         model = Date
         fields = ['Date_type', 'Date']
         widgets = {'Date': DateInput()}
+
+class MultipleForm(forms.Form):
+    no_of_addresses= forms.IntegerField(min_value=0,max_value=10)
+    no_of_phones = forms.IntegerField(min_value=0,max_value=10)
+    no_of_dates = forms.IntegerField(min_value=0,max_value=10)

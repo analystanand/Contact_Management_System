@@ -1,13 +1,11 @@
-from django.shortcuts import render
-from django.db.models import Q
 import re
-from django.contrib.postgres.search import SearchVector
-from django.shortcuts import redirect, get_object_or_404
-from .models import Contact, Address, Phone, Date
-from .forms import ContactForm, AddressForm, PhoneForm, DateForm
-from django.http import Http404, HttpResponseRedirect, HttpResponse
-from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import Http404, HttpResponseRedirect
 from django.core.paginator import Paginator
+from django.db.models import Q
+from django.forms import formset_factory
+from .models import Contact, Address, Phone, Date
+from .forms import ContactForm, AddressForm, PhoneForm, DateForm, MultipleForm
 
 
 def home(request):
@@ -30,44 +28,69 @@ def contact_detail(request, pk):
     return render(request, 'contact.html', result)
 
 
+def add_new_count(request):
+    forms_count = {'no_of_addresses': 1, 'no_of_phones': 1, 'no_of_dates': 1}
+    multiple_form = MultipleForm(initial=forms_count)
+    return render(request, 'add_new_count.html', {'multiple_form': multiple_form})
+
+
 def add_new(request):
+    forms_count = {'no_of_addresses': 0, 'no_of_phones': 0, 'no_of_dates': 0}
+    filled_multiple_form = MultipleForm(request.GET)
+    if filled_multiple_form.is_valid():
+        forms_count['no_of_addresses'] = filled_multiple_form.cleaned_data['no_of_addresses']
+        forms_count['no_of_phones'] = filled_multiple_form.cleaned_data['no_of_phones']
+        forms_count['no_of_dates'] = filled_multiple_form.cleaned_data['no_of_dates']
+    else:
+        HttpResponseRedirect(('add_new_count'))
+
+    contact_form_obj = ContactForm()
+    address_form_obj = formset_factory(AddressForm, extra=forms_count['no_of_addresses'])
+    phone_form_obj = formset_factory(PhoneForm, extra=forms_count['no_of_phones'])
+    date_form_obj = formset_factory(DateForm, extra=forms_count['no_of_dates'])
+
     if request.method == 'POST':
         filled_contact_form = ContactForm(request.POST)
-        filled_address_form = AddressForm(request.POST)
-        filled_phone_form = PhoneForm(request.POST)
-        filled_date_form = DateForm(request.POST)
+        filled_address_form_set = address_form_obj(request.POST)
+        filled_phone_form_set = phone_form_obj(request.POST)
+        filled_date_form_set = date_form_obj(request.POST)
 
         valid_contact = filled_contact_form.is_valid()
-        valid_address = filled_address_form.is_valid()
-        valid_phone = filled_phone_form.is_valid()
-        valid_date = filled_date_form.is_valid()
+        valid_address = filled_address_form_set.is_valid()
+        valid_phone = filled_phone_form_set.is_valid()
+        valid_date = filled_date_form_set.is_valid()
 
         if valid_contact and valid_address and valid_phone and valid_date:
             created_contact = filled_contact_form.save()
 
-            temp_address = filled_address_form.save(commit=False)
-            temp_phone = filled_phone_form.save(commit=False)
-            temp_date = filled_date_form.save(commit=False)
+            temp_address = [j.save(commit=False) for j in filled_address_form_set]
+            temp_phone = [f.save(commit=False) for f in filled_phone_form_set]
+            temp_date = [k.save(commit=False) for k in filled_date_form_set]
 
-            temp_address.Contact_id = created_contact
-            temp_phone.Contact_id = created_contact
-            temp_date.Contact_id = created_contact
+            for j in temp_address:
+                j.Contact_id = created_contact
+                j.save()
 
-            temp_address.save()
-            temp_phone.save()
-            temp_date.save()
+            for f in temp_phone:
+                f.Contact_id = created_contact
+                f.save()
+
+            for k in temp_date:
+                k.Contact_id = created_contact
+                k.save()
+
             return redirect('contact_detail', pk=created_contact.pk)
         else:
-            return HttpResponseRedirect(reversed(''))
-    else:
-        contact_form_obj = ContactForm()
-        address_form_obj = AddressForm()
-        phone_form_obj = PhoneForm()
-        date_form_obj = DateForm()
-        return render(request, 'add_new.html', {"contact": contact_form_obj,
-                                                "address": address_form_obj,
-                                                "phone": phone_form_obj,
-                                                "date": date_form_obj})
+            return HttpResponseRedirect('home')
+
+    address_form_set = address_form_obj()
+    phone_form_set = phone_form_obj()
+    date_form_set = date_form_obj()
+
+    return render(request, 'add_new.html', {"contact": contact_form_obj,
+                                            "address": address_form_set,
+                                            "phone": phone_form_set,
+                                            "date": date_form_set})
 
 
 def edit_contact(request, pk):
