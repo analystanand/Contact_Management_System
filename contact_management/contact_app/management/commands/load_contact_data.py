@@ -1,9 +1,6 @@
 from csv import DictReader
 from datetime import datetime
-import numpy as np
-
 from django.core.management import BaseCommand
-
 from contact_app.models import Contact, Address, Phone, Date
 from pytz import UTC
 import re
@@ -26,7 +23,7 @@ class Command(BaseCommand):
             print('Contact data already loaded...exiting.')
             print(ALREADY_LOADED_ERROR_MESSAGE)
             return
-        print("Loading data for contact available for adoption")
+        print("Loading data for contact available for contact management")
         for row in DictReader(open('./Contacts.csv')):
             contact_obj = Contact()
             contact_obj.Fname = row['first_name']
@@ -67,7 +64,7 @@ class Command(BaseCommand):
                 phone_obj.Phone_type = "work_phone"
                 phone_obj.save()
 
-            address_obj = Address()
+
             home_street = None
             home_city = None
             home_state = None
@@ -76,20 +73,23 @@ class Command(BaseCommand):
             if row['home_address']:
                 home_street = row["home_address"]
             if row['home_city']:
-                home_city = row["home_address"]
+                home_city = row["home_city"]
             if row['home_state']:
                 home_state = row['home_state']
             if row['home_zip']:
                 home_zip = row['home_zip']
 
             if home_street or home_city or home_state or home_zip:
+                address_obj = Address()
                 address_obj.Contact_id = contact_obj
                 address_obj.Address_type = "home"
-                address_obj.City = home_street
+                address_obj.Street = home_street
+                address_obj.City = home_city
                 address_obj.State = home_state
-                address_obj.State = home_zip
+                address_obj.Zip = home_zip
+                address_obj.save()
 
-            work_address_obj = Address()
+
             work_street = None
             work_city = None
             work_state = None
@@ -105,11 +105,14 @@ class Command(BaseCommand):
                 work_zip = row['work_zip']
 
             if work_street or work_city or work_state or work_zip:
-                address_obj.Contact_id = contact_obj
-                address_obj.Address_type = "work"
-                address_obj.City = work_city
-                address_obj.State = work_state
-                address_obj.State = work_zip
+                work_address_obj = Address()
+                work_address_obj.Contact_id = contact_obj
+                work_address_obj.Address_type = "work"
+                work_address_obj.Street = work_street
+                work_address_obj.City = work_city
+                work_address_obj.State = work_state
+                work_address_obj.Zip = work_zip
+                work_address_obj.save()
 
             if row['birth_date']:
                 date_obj = Date()

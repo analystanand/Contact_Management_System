@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MaxValueValidator
 from localflavor.us.models import USStateField, USZipCodeField
 
 
@@ -16,17 +15,17 @@ class Contact(models.Model):
 class Address(models.Model):
     Address_id = models.AutoField(primary_key=True)
     Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE,db_column="Contact_id")
-    Address_type = models.CharField(max_length=50)
+    Address_type = models.CharField(max_length=50,null=True)
     Street = models.CharField(max_length=100,blank=True,null=True)
     City = models.CharField(max_length=50,blank=True,null=True)
     State = models.CharField(max_length=50,blank=True,null=True)
-    Zip = USZipCodeField(blank=True)
+    Zip = models.IntegerField(blank=True,null=True)
 
 
 class Phone(models.Model):
     Phone_id = models.AutoField(primary_key=True)
     Contact_id = models.ForeignKey('Contact', on_delete=models.CASCADE,db_column="Contact_id")
-    Phone_type = models.CharField(max_length=50,blank=True)
+    Phone_type = models.CharField(max_length=50,blank=True,null=True)
     Area_code = models.IntegerField(blank=True,null=True)
     Number = models.IntegerField(blank=True,null=True)
 

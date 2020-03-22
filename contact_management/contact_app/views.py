@@ -10,7 +10,7 @@ from .forms import ContactForm, AddressForm, PhoneForm, DateForm, MultipleForm
 
 def home(request):
     contact_list = Contact.objects.all()
-    paginator = Paginator(contact_list, 10)
+    paginator = Paginator(contact_list, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, 'home.html', {'page_obj': page_obj})
@@ -99,34 +99,35 @@ def edit_contact(request, pk):
     phone = Phone.objects.filter(Contact_id=pk)
     date = Date.objects.filter(Contact_id=pk)
 
-    if request.method == 'POST':
-        filled_contact_form = ContactForm(request.POST, instance=contact)
-        filled_address_form = AddressForm(request.POST, instance=address)
-        filled_phone_form = PhoneForm(request.POST, instance=phone)
-        filled_date_form = DateForm(request.POST, instance=date)
-
-        valid_contact = filled_contact_form.is_valid()
-        valid_address = filled_address_form.is_valid()
-        valid_phone = filled_phone_form.is_valid()
-        valid_date = filled_date_form.is_valid()
-
-        if valid_contact and valid_address and valid_phone and valid_date:
-            updated_contact = filled_contact_form.save()
-            filled_address_form.save()
-            filled_phone_form.save()
-            filled_date_form.save()
-            return redirect('contact_detail', pk=updated_contact.pk)
-
-    address_value = list(address.values('Address_type','Street','City','State','Zip'))
-    phone_value = list(phone.values('Phone_type','Area_code','Number'))
-    date_value = list(date.values('Date_type','Date'))
-
-
     #create multiple forms
     address_formset= formset_factory(AddressForm,extra=0)
     phone_formset = formset_factory(PhoneForm,extra=0)
     date_formset = formset_factory(DateForm, extra=0)
 
+    if request.method == 'POST':
+        filled_contact_form = ContactForm(request.POST)
+        filled_address_formset = address_formset(request.POST)
+        filled_phone_formset = phone_formset(request.POST)
+        filled_date_formset = date_formset(request.POST)
+
+        valid_contact = filled_contact_form.is_valid()
+        valid_address = filled_address_formset.is_valid()
+        valid_phone = filled_phone_formset.is_valid()
+        valid_date = filled_date_formset.is_valid()
+
+        if valid_contact and valid_address and valid_phone and valid_date:
+            updated_contact = filled_contact_form.save()
+            for  f in filled_address_formset:
+                f.save()
+            for j  in filled_phone_formset:
+                j.save()
+            for k in filled_date_formset:
+                k.save()
+            return redirect('contact_detail', pk=updated_contact.pk)
+
+    address_value = list(address.values('Address_type','Street','City','State','Zip'))
+    phone_value = list(phone.values('Phone_type','Area_code','Number'))
+    date_value = list(date.values('Date_type','Date'))
 
     # pre fill data from previous information
     pre_filled_contact_form = ContactForm(instance=contact)
@@ -159,7 +160,7 @@ def normalize_search(search_term,
 def search(request):
     search_term = ''
     fields = ['Fname', 'Mname', 'Lname',
-              'address__Address_type', 'address__Street', 'address__City''address__State', 'address__Zip',
+              'address__Address_type', 'address__Street', 'address__City','address__State', 'address__Zip',
               'phone__Phone_type', 'phone__Area_code','phone__Number']
     contacts = Contact.objects.all()
     query = None

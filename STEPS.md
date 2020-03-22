@@ -13,6 +13,6 @@
 12. Add admin for Contact Model
 13. Create super user 
 14. add view and url pattern
-15. add template
+15. add templates
 
        
