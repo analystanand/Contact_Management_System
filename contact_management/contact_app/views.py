@@ -117,13 +117,23 @@ def edit_contact(request, pk):
 
         if valid_contact and valid_address and valid_phone and valid_date:
             updated_contact = filled_contact_form.save()
-            for  f in filled_address_formset:
-                f.save()
-            for j  in filled_phone_formset:
+            temp_address = [j.save(commit=False) for j in filled_address_formset]
+            temp_phone = [f.save(commit=False) for f in filled_phone_formset]
+            temp_date = [k.save(commit=False) for k in filled_date_formset]
+
+            for j in temp_address:
+                j.Contact_id = updated_contact
                 j.save()
-            for k in filled_date_formset:
+
+            for f in temp_phone:
+                f.Contact_id = updated_contact
+                f.save()
+
+            for k in temp_date:
+                k.Contact_id = updated_contact
                 k.save()
-            return redirect('contact_detail', pk=updated_contact.pk)
+
+        return redirect('contact_detail', pk=updated_contact.pk)
 
     address_value = list(address.values('Address_type','Street','City','State','Zip'))
     phone_value = list(phone.values('Phone_type','Area_code','Number'))
