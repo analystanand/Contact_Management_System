@@ -55,5 +55,5 @@ prefix: /home/user/anaconda3/envs/contact_management
 * Alternatively Create [Virtual Environment](https://programwithus.com/learn-to-code/Pip-and-virtualenv-on-Windows/)  and use requirements.txt. (prefered for *windows*)
 ``pip install -r requirements.txt``
 
-* Run below given command for running server and access http://localhost:8000/ in browser.
+* Change directory to contact and Run below given command for running server and access http://localhost:8000/ in browser.
 ``python manage.py runserver``
