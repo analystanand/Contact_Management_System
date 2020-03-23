@@ -9,7 +9,7 @@ from .forms import ContactForm, AddressForm, PhoneForm, DateForm, MultipleForm
 
 
 def home(request):
-    contact_list = Contact.objects.all()
+    contact_list = Contact.objects.all().order_by('Contact_id')
     paginator = Paginator(contact_list, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -176,17 +176,18 @@ def search(request):
     query = None
     if 'search' in request.GET:
         search_term = request.GET["search"]
-        terms = normalize_search(search_term)
-        for t in terms:
-            or_query = None
-            for f in fields:
-                q = Q(**{"%s__icontains" % f: t})
-                or_query = q if or_query is None else or_query | q
-            if query is None:
-                query = or_query
-            else:
-                query = query | or_query
+        if search_term:
+            terms = normalize_search(search_term)
+            for t in terms:
+                or_query = None
+                for f in fields:
+                    q = Q(**{"%s__icontains" % f: t})
+                    or_query = q if or_query is None else or_query | q
+                if query is None:
+                    query = or_query
+                else:
+                    query = query | or_query
 
-        contacts = contacts.filter(query)
+            contacts = contacts.filter(query).distinct()
     context = {'contacts': contacts, 'search_term': search_term}
     return render(request, 'search.html', context)
