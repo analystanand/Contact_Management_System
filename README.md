@@ -1,28 +1,23 @@
 ## Web Application for Managing Contact List
-
-
 ### Features
 - Contact Display Window
 - Contact Search
 - Adding New Contacts
 - Modifying / Deleting Existing Contacts
 
-## Platform Details
+### Platform Details :Exported from Conda
 ``Language: Python``
-
 ``Framework: Django``
-
-``OS: Ubuntu 18.04``
+``OS: Ubuntu 18.04/linux-64``
 
 ``python version : 3.7.4.final.0``
 
 `` conda version : 4.8.2``
 
-`` browser: Mozila``
 
 ## Requirements
 
-#### platform: linux-64
+#### 
 ```
 name: contact_management
 channels:
@@ -51,19 +46,14 @@ dependencies:
   - wheel=0.34.2=py38_0
   - xz=5.2.4=h14c3975_4
   - zlib=1.2.11=h7b6447c_3
-prefix: /home/parma/anaconda3/envs/contact_management
+prefix: /home/user/anaconda3/envs/contact_management
 ```
 
 ## How to build the application and run 
-*  Create virtual environment using environment.yml.
+*  Create virtual environment using environment.yml.``conda env create -f environment.yml``
 
-
-``conda env create -f environment.yml``
-
-* Alternatively Create Virtual Enviornment  and use requirments.txt
+* Alternatively Create [Virtual Environment](https://programwithus.com/learn-to-code/Pip-and-virtualenv-on-Windows/)  and use requirements.txt. (prefered for *windows*)
 ``pip install -r requirements.txt``
 
-
 * Run below given command for running server and access http://localhost:8000/ in browser.
-
 ``python manage.py runserver``
